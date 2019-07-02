@@ -44,7 +44,7 @@ function process($method, $url, $data) {
     // DELETE /api/auth: логаут пользователя с удалением токена
     if ($method === "DELETE" && count($url) === 0) {
         $token = getallheaders()['authorization'];
-        $token = substr($token, 7);
+        $token = $db->escape_string(substr($token, 7));
 
         if (!$token) {
             http_response_code(401);
