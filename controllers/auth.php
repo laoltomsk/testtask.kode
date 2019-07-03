@@ -7,12 +7,12 @@ function process($method, $url, $data) {
     if ($method === "POST" && count($url) === 0) {
 
         $data->username = $db->escape_string($data->username);
-        $data->password = $db->escape_string($data->password);
 
         $hashed_password = hash("sha256", $data->password." is a password of ".$data->username);
 
         $users = $db->query("SELECT * FROM `user`
-            WHERE `username` = '$data->username' AND `password` = '$hashed_password'");
+                            WHERE `username` = '$data->username'
+                            AND `password` = '$hashed_password'");
 
         if (!($user = $users->fetch_array())) {
             http_response_code(404);
@@ -27,11 +27,11 @@ function process($method, $url, $data) {
         }
 
         $user_id = $user['id'];
-        $token = hash("sha256", $data->username).hash("sha256", time());
+        $token = hash("sha256", $data->username.time());
         $token_expire_date = time() + 1800;
 
         $db->query("INSERT INTO `token` (`user_id`, `token`, `expire`)
-                      VALUES ($user_id, '$token', $token_expire_date)");
+                    VALUES ($user_id, '$token', $token_expire_date)");
 
         $response = new stdClass();
         $response->isSuccess = true;

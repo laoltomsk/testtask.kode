@@ -11,7 +11,6 @@ function process($method, $url, $data) {
         $db->query("DELETE FROM `user` WHERE `expire` < $time");
 
         $data->username = $db->escape_string($data->username);
-        $data->password = $db->escape_string($data->password);
 
         $user_with_same_username = $db->query("SELECT * FROM `user` WHERE `username` = '$data->username'");
 
@@ -30,14 +29,14 @@ function process($method, $url, $data) {
 
         $hashed_password = hash("sha256", $data->password." is a password of ".$data->username);
         $db->query("INSERT INTO `user` (`username`, `password`)
-                      VALUES ('$data->username', '$hashed_password')");
+                    VALUES ('$data->username', '$hashed_password')");
         $user_id = $db->insert_id;
 
-        $token = hash("sha256", $data->username).hash("sha256", time());
+        $token = hash("sha256", $data->username.time());
         $token_expire_date = time() + 1800;
 
         $db->query("INSERT INTO `token` (`user_id`, `token`, `expire`)
-                      VALUES ($user_id, '$token', $token_expire_date)");
+                    VALUES ($user_id, '$token', $token_expire_date)");
 
         $response = new stdClass();
         $response->isSuccess = true;

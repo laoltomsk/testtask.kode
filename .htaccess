@@ -2,5 +2,9 @@ RewriteEngine On
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^api/(.+)$ api.php?q=$1 [L,QSA]
+
 AddDefaultCharset UTF-8
-php_flag display_errors on
+php_flag display_errors off
+
+php_value post_max_size 500M
+php_value upload_max_filesize 400M
