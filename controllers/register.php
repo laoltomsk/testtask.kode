@@ -8,7 +8,7 @@ function process($method, $url, $data) {
 
         //не даём таблице токенов бесконтрольно разрастаться
         $time = time();
-        $db->query("DELETE FROM `user` WHERE `expire` < $time");
+        $db->query("DELETE FROM `token` WHERE `expire` < $time");
 
         $data->username = $db->escape_string($data->username);
 
