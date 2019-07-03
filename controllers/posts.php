@@ -65,6 +65,18 @@ function process($method, $url, $data) {
 
                         return;
                     }
+
+                    if ($data->attachments[$i]->url !== "video" && $data->attachments[$i]->url !== "picture") {
+                        http_response_code(422);
+
+                        $response = new stdClass();
+                        $response->isSuccess = false;
+                        $response->code = 422;
+                        $response->error = "Unsupported attachment type.";
+                        echo json_encode($response);
+
+                        return;
+                    }
                 }
             }
         }
@@ -167,7 +179,7 @@ function process($method, $url, $data) {
 
         for ($i = 0; $post = $posts->fetch_array(); $i++) {
             $response->posts[$i] = new stdClass();
-            $response->posts[$i]->id = $post[0]; //потому что ['id'] перезаписался при джойне
+            $response->posts[$i]->id = $post[0]*1; //потому что ['id'] перезаписался при джойне
             $response->posts[$i]->username = $post['username'];
             $response->posts[$i]->text = $post['text'];
             $response->posts[$i]->likes = $post['likes']*1;
