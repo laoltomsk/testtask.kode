@@ -1,4 +1,7 @@
 <?php
+include_once "embed_lib/autoloader.php";
+use Embed\Embed;
+
 function process($method, $url, $data) {
 
     global $db;
@@ -81,55 +84,11 @@ function process($method, $url, $data) {
             }
         }
 
-        $link_url = $data->link;
-        $linked_page_content = file_get_contents($link_url);
-        $linked_page = new DOMDocument();
-        $linked_page->loadHTML('<?xml encoding="utf-8" ?>' . $linked_page_content);
-
-        if ($linked_page) {
-            foreach ($linked_page->getElementsByTagName('meta') as $metatag) {
-                if ($metatag->getAttribute('itemprop') === 'image') {
-                    $pic = $metatag->getAttribute('content');
-                } else if ($metatag->getAttribute('property') === 'og:image:src') {
-                    $pic = $metatag->getAttribute('content');
-                } else if ($metatag->getAttribute('property') === 'twitter:image:src') {
-                    $pic = $metatag->getAttribute('value');
-                } else if ($metatag->getAttribute('property') === 'og:image') {
-                    $pic = $metatag->getAttribute('content');
-                } else if ($metatag->getAttribute('property') === 'twitter:image') {
-                    $pic = $metatag->getAttribute('value');
-                }
-
-                if ($metatag->getAttribute('itemprop') === 'name') {
-                    $title = $metatag->getAttribute('content');
-                } else if ($metatag->getAttribute('property') === 'og:title:src') {
-                    $title = $metatag->getAttribute('content');
-                } else if ($metatag->getAttribute('property') === 'twitter:title:src') {
-                    $title = $metatag->getAttribute('value');
-                } else if ($metatag->getAttribute('property') === 'og:image') {
-                    $pic = $metatag->getAttribute('content');
-                } else if ($metatag->getAttribute('property') === 'twitter:image') {
-                    $pic = $metatag->getAttribute('value');
-                }
-            }
-            foreach ($linked_page->getElementsByTagName('title') as $title) {
-                $title = $title->nodeValue;
-            }
-
-            if (isset($pic)) {
-                if (substr($pic, 0, 4) !== "http") {
-                    if (substr($pic, 0, 2) === "//") {
-                        $pic = "http:" . $pic;
-                    } else if (substr($pic, 0, 1) === "/") {
-                        $pic = parse_url($link_url, PHP_URL_SCHEME) . "://" . parse_url($link_url, PHP_URL_HOST) . $pic;
-                    } else {
-                        $path = parse_url($link_url, PHP_URL_PATH);
-                        $path = strrpos($path, "/") === false ? $path : substr($path, 0, strrpos($path, "/"));
-                        $pic = parse_url($link_url, PHP_URL_SCHEME) . "://" .
-                            parse_url($link_url, PHP_URL_HOST) . $path . "/" . $pic;
-                    }
-                }
-            }
+        if (isset($data->link)) {
+            $link_url = $data->link;
+            $link_info = Embed::create($link_url);
+            $title = $link_info->title;
+            $pic = $link_info->image;
         }
 
         $user_id = $user['id'];

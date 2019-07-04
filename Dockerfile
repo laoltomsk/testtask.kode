@@ -54,6 +54,7 @@ RUN apt-get install -y \
 	php$php_version-intl \
 	php$php_version-json \
 	php$php_version-ldap \
+	php$php_version-mbstring \
 	php$php_version-mysqli \
 	php$php_version-odbc \
 	php$php_version-opcache \
