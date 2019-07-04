@@ -1,0 +1,20 @@
+# This is an experimental environment
+# Everything is contained in one image
+version: '2'
+services:
+  docker-ssh-lamp:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    hostname: docker-ssh-lamp
+    image: docker-ssh-lamp
+    volumes:
+    - ./docker:/docker
+    - ./mysql:/var/lib/mysql
+    - ./var_log:/var/log
+    ports:
+    - "80:80" # Both 2080 and 8000 port are using apache
+    - "22:22"
+    - "3306:3306"
+    container_name: "testtask-kode"
+    entrypoint: /docker/docker_start.sh

@@ -66,7 +66,7 @@ function process($method, $url, $data) {
                         return;
                     }
 
-                    if ($data->attachments[$i]->url !== "video" && $data->attachments[$i]->url !== "picture") {
+                    if ($data->attachments[$i]->type !== "video" && $data->attachments[$i]->type !== "picture") {
                         http_response_code(422);
 
                         $response = new stdClass();
